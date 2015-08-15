@@ -1,3 +1,7 @@
+LocalServer/bin
+LocalServer/Deploy_*
+LocalServer/doc
+
 # Windows image file caches
 Thumbs.db
 ehthumbs.db
