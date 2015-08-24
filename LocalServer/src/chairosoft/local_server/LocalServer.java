@@ -238,6 +238,7 @@ public class LocalServer
             
             switch (x.REQUEST_METHOD)
             {
+                case "OPTIONS": this.defaultRequestHandler.handleOptions(x); break;
                 case "GET": this.defaultRequestHandler.handleGet(x); break;
                 case "HEAD": this.defaultRequestHandler.handleHead(x); break;
                 case "POST": this.defaultRequestHandler.handlePost(x); break;

@@ -13,6 +13,7 @@ import java.io.IOException;
 
 public interface LocalHttpRequestHandler
 {
+    void handleOptions(LocalHttpExchange x) throws IOException;
     void handleGet(LocalHttpExchange x) throws IOException;
     void handleHead(LocalHttpExchange x) throws IOException;
     void handlePost(LocalHttpExchange x) throws IOException;
