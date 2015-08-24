@@ -61,6 +61,7 @@ public class LocalServer
         server.createContext("/test", (LocalHttpExchange x) ->
         {
             System.out.println("tested!");
+            System.out.println(x.getRequestString());
             String response = "You tested it, yay.";
             x.sendStringResponse(200, response);
         });

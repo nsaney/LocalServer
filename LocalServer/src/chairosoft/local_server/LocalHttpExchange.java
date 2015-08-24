@@ -57,6 +57,30 @@ public class LocalHttpExchange implements Closeable
     @Override public void close() throws IOException { this.exchange.close(); }
     
     /**
+     * Get a string representation of this exchange's request.
+     * @return a string representation of this exchange's request
+     */
+    public String getRequestString()
+    {
+        StringBuilder sb = new StringBuilder();
+        String SP = " ";
+        String CRLF = "\r\n";
+        String KVSEP = ": ";
+        sb.append(this.REQUEST_METHOD + SP + this.REQUEST_URI + SP + this.REQUEST_PROTOCOL + CRLF);
+        for (String headerName : this.REQUEST_HEADERS.keySet())
+        {
+            for (String headerValue : this.REQUEST_HEADERS.get(headerName))
+            {
+                sb.append(headerName + KVSEP + headerValue + CRLF);
+            }
+        }
+        sb.append(CRLF);
+        sb.append(this.REQUEST_BODY);
+        return sb.toString();
+    }
+    
+    
+    /**
      * Sends a header-only response.
      * @param statusCode   the HTTP status code for the response
      * @throws IOException if a problem occurs while writing the response
