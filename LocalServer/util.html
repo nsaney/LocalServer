@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Local Server Utility</title>
+  <style>
+    input[id^=octet] { width: 2em; text-align: right; }
+    input#portNumber { width: 3em; text-align: left; }
+    input[type=number] { -moz-appearance: textfield; }
+    .monospace { font-family: monospace; }
+  </style>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+  <script type="text/javascript">
+    $(document).ready(function () {
+      var $octet1 = $('#octet1');
+      var $octet2 = $('#octet2');
+      var $octet3 = $('#octet3');
+      var $octet4 = $('#octet4');
+      var $portNumber = $('#portNumber');
+      var $resource = $('#resource');
+      var $go = $('#go');
+      var $result = $('#result');
+      var getResult = function () {
+        var url = 'http://' + $octet1.val() 
+          + '.' + $octet2.val() 
+          + '.' + $octet3.val() 
+          + '.' + $octet4.val() 
+          + ':' + $portNumber.val()
+          + '/' + $resource.val();
+        $result.text('Getting Result for: ' + url);
+        
+        var ajaxSettings = {
+          url: url,
+          crossDomain: true,
+          success: function (data, status, jqXHR) {
+            $result.html(jqXHR.responseText || jqXHR.responseXML);
+          },
+          error: function (jqXHR, textStatus, errorText) {
+            $result.html(jqXHR.status + ' (' + textStatus + ') - ' + errorText);
+          },
+        };
+        
+        $.ajax(ajaxSettings);
+        return false;
+      };
+      $go.click(getResult);
+      $('input').keydown(function (e) { if (e.which == 13) { return getResult(); } });
+    });
+  </script>
+</head>
+<body>
+  <h1>Local Server Utility</h1>
+  <p>
+    Use this utility to find the local server you want to work with.
+  </p>
+  <table>
+    <tr>
+      <td colspan="8">IP Address</td>
+      <td colspan="2">Port #</td>
+      <td colspan="1">Resource</td>
+    </tr>
+    <tr class="monospace">
+      <td><input id="octet1" type="number" min="0" step="1" max="255"/></td>
+      <td>.</td>
+      <td><input id="octet2" type="number" min="0" step="1" max="255"/></td>
+      <td>.</td>
+      <td><input id="octet3" type="number" min="0" step="1" max="255"/></td>
+      <td>.</td>
+      <td><input id="octet4" type="number" min="0" step="1" max="255"/></td>
+      <td>:</td>
+      <td><input id="portNumber" type="number" min="1024" step="1" max="49151"/></td>
+      <td>/</td>
+      <td><input id="resource" type="text"/></td>
+    </tr>
+  </table>
+  <button id="go">Go!</button>
+  <pre id="result"></pre>
+</body>
+</html>
