@@ -58,6 +58,14 @@ public class LocalServer
             }
         });
         
+        server.createContext("/existence", (LocalHttpExchange x) ->
+        {
+            System.out.println("existence!");
+            String response = "true";
+            x.RESPONSE_HEADERS.set("Access-Control-Allow-Origin", "*");
+            x.sendStringResponse(200, response);
+        });
+        
         server.createContext("/test", (LocalHttpExchange x) ->
         {
             System.out.println("tested!");
