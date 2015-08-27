@@ -98,7 +98,14 @@ public class LocalHttpExchange implements Closeable
     public void sendNotFoundResponse()
         throws IOException
     {
-        this.sendStringResponse(404, "Not found");
+        if (this.REQUEST_METHOD.equals("HEAD"))
+        {
+            this.sendHeadersOnly(404);
+        }
+        else
+        {
+            this.sendStringResponse(404, "Not found");
+        }
     }
     
     /**
