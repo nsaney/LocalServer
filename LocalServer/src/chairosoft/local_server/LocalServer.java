@@ -24,6 +24,8 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 
+import java.util.concurrent.Executor;
+
 import com.sun.net.httpserver.HttpContext;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
@@ -275,4 +277,9 @@ public class LocalServer
         this.server.start();
     }
     public void stop(int delay) { this.server.stop(delay); }
+    
+    public Executor getExecutor() { return this.server.getExecutor(); }
+    public void setExecutor(Executor e) { this.server.setExecutor(e); }
+    
+    public HttpServer getWrappedHttpServer() { return this.server; }
 }
