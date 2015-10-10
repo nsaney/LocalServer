@@ -273,7 +273,6 @@ public class LocalServer
             x.sendByteArrayResponse(200, this.faviconBytes);
         });
         
-        this.server.setExecutor(null); // creates a default executor
         this.server.start();
     }
     public void stop(int delay) { this.server.stop(delay); }
