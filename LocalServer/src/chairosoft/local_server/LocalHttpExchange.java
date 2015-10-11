@@ -79,6 +79,22 @@ public class LocalHttpExchange implements Closeable
         return sb.toString();
     }
     
+    public String getResponseHeaderString()
+    {
+        StringBuilder sb = new StringBuilder();
+        String CRLF = "\r\n";
+        String KVSEP = ": ";
+        for (String headerName : this.RESPONSE_HEADERS.keySet())
+        {
+            for (String headerValue : this.RESPONSE_HEADERS.get(headerName))
+            {
+                sb.append(headerName + KVSEP + headerValue + CRLF);
+            }
+        }
+        sb.append(CRLF);
+        return sb.toString();
+    }
+    
     
     /**
      * Sends a header-only response.
@@ -129,6 +145,35 @@ public class LocalHttpExchange implements Closeable
     public void sendByteArrayResponse(int statusCode, byte[] response)
         throws IOException
     {
+        // deal with ranges
+        // see http://stackoverflow.com/questions/18336174/how-to-properly-provide-data-for-audio
+        boolean hasRange = this.REQUEST_HEADERS.containsKey("Range");
+        boolean responseHasContentRange = this.RESPONSE_HEADERS.containsKey("Content-Range");
+        if (hasRange && !responseHasContentRange)
+        {
+            // looks like "bytes=0-1"
+            String[] rangeValues = this.REQUEST_HEADERS.getFirst("Range").split("=|-");
+            int startPos = Integer.parseInt(rangeValues[1]);
+            int lastPos = response.length - 1;
+            int endPos = lastPos;
+            if (rangeValues.length > 2 && !rangeValues[2].equals(""))
+            {
+                endPos = Integer.parseInt(rangeValues[2]);
+                if (endPos > lastPos) { endPos = lastPos; }
+            }
+            if (startPos != 0 || endPos != lastPos || (rangeValues.length > 2 && rangeValues[2].equals("")))
+            {
+                statusCode = 206;
+            }
+            int rangeLength = endPos + 1 - startPos;
+            byte[] rangedResponse = new byte[rangeLength];
+            System.arraycopy(response, startPos, rangedResponse, 0, rangeLength);
+            response = rangedResponse;
+            String contentRange = String.format("bytes %d-%d/%d", startPos, endPos, rangeLength);
+            this.RESPONSE_HEADERS.add("Content-Range", contentRange);
+        }
+        
+        // send headers and write response
         this.exchange.sendResponseHeaders(statusCode, response.length);
         try (OutputStream out = this.exchange.getResponseBody())
         {

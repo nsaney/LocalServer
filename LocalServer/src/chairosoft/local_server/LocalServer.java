@@ -128,21 +128,47 @@ public class LocalServer
      */
     public static byte[] getByteArrayFromInputStream(InputStream in)
     {
+        return LocalServer.getByteArrayFromInputStream(in, 2048);
+    }
+    
+    /**
+     * Convenience method for turning an InputStream into a byte array.
+     * Converts any exceptions to RuntimeException before rethrowing them.
+     * @param in         the input stream to read from 
+     * @param bufferSize the size of the buffer to use while reading
+     * @return           a byte array version of the contents of the input stream
+     */
+    public static byte[] getByteArrayFromInputStream(InputStream in, int bufferSize)
+    {
         ByteArrayOutputStream baos = new ByteArrayOutputStream() { @Override public byte[] toByteArray() { return this.buf; } };
         try 
         {
-            byte[] buffer = new byte[2048];
-            int bytesRead = 0;
-            while (-1 < (bytesRead = in.read(buffer)))
-            {
-                baos.write(buffer, 0, bytesRead);
-            }
+            LocalServer.copyIO(in, baos, bufferSize);
         }
         catch (Exception ex)
         {
             throw new RuntimeException(ex);
         }
         return baos.toByteArray();
+    }
+    
+    /**
+     * Convenience method for copying from an InputStream to an OutputStream.
+     * This method will attempt to copy until the read method on 
+     * the InputStream returns -1.
+     * @param in         the input stream to read from 
+     * @param out        the output stream to write to
+     * @param bufferSize the size of the buffer to use while copying
+     */
+    public static void copyIO(InputStream in, OutputStream out, int bufferSize) 
+        throws IOException
+    {
+        byte[] buffer = new byte[bufferSize];
+        int bytesRead = 0;
+        while (-1 < (bytesRead = in.read(buffer)))
+        {
+            out.write(buffer, 0, bytesRead);
+        }
     }
     
     
