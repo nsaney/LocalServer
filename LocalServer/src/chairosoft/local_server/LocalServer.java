@@ -56,7 +56,7 @@ public class LocalServer
                 String uri = x.REQUEST_URI.toString();
                 System.out.println("get requested: " + uri);
                 String response = "You requested: " + uri;
-                x.sendStringResponse(200, response);
+                x.sendStringResponse(200, "text/plain", response);
             }
         });
         
@@ -65,7 +65,7 @@ public class LocalServer
             System.out.println("existence!");
             String response = "true";
             x.RESPONSE_HEADERS.set("Access-Control-Allow-Origin", "*");
-            x.sendStringResponse(200, response);
+            x.sendStringResponse(200, "text/plain", response);
         });
         
         server.createContext("/test", (LocalHttpExchange x) ->
@@ -73,14 +73,14 @@ public class LocalServer
             System.out.println("tested!");
             System.out.println(x.getRequestString());
             String response = "You tested it, yay.";
-            x.sendStringResponse(200, response);
+            x.sendStringResponse(200, "text/plain", response);
         });
         
         server.createContext("/stop", (LocalHttpExchange x) ->
         {
             System.out.println("stopped!");
             String response = "You stopped it, yay.";
-            x.sendStringResponse(200, response);
+            x.sendStringResponse(200, "text/plain", response);
             server.stop(0);
         });
         
@@ -295,8 +295,7 @@ public class LocalServer
                 return;
             }
             
-            x.RESPONSE_HEADERS.set("Content-Type", this.faviconMimeType);
-            x.sendByteArrayResponse(200, this.faviconBytes);
+            x.sendByteArrayResponse(200, this.faviconMimeType, this.faviconBytes);
         });
         
         this.server.start();

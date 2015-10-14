@@ -120,29 +120,31 @@ public class LocalHttpExchange implements Closeable
         }
         else
         {
-            this.sendStringResponse(404, "Not found");
+            this.sendStringResponse(404, "text/plain", "Not found");
         }
     }
     
     /**
      * Sends a string as an HTTP response.
      * @param statusCode   the HTTP status code for the response
+     * @param contentType  the contenty type for the response
      * @param response     the string to send as a response
      * @throws IOException if a problem occurs while writing the response or closing the exchange's streams
      */
-    public void sendStringResponse(int statusCode, String response)
+    public void sendStringResponse(int statusCode, String contentType, String response)
         throws IOException
     {
-        this.sendByteArrayResponse(statusCode, response.getBytes());
+        this.sendByteArrayResponse(statusCode, contentType, response.getBytes());
     }
     
     /**
      * Sends a byte array as an HTTP response.
      * @param statusCode   the HTTP status code for the response
+     * @param contentType  the contenty type for the response
      * @param response     the byte array to send as a response
      * @throws IOException if a problem occurs while writing the response or closing the exchange's streams
      */
-    public void sendByteArrayResponse(int statusCode, byte[] response)
+    public void sendByteArrayResponse(int statusCode, String contentType, byte[] response)
         throws IOException
     {
         // deal with ranges
@@ -171,6 +173,12 @@ public class LocalHttpExchange implements Closeable
             response = rangedResponse;
             String contentRange = String.format("bytes %d-%d/%d", startPos, endPos, rangeLength);
             this.RESPONSE_HEADERS.add("Content-Range", contentRange);
+        }
+        
+        // add content type if not already set
+        if (!this.RESPONSE_HEADERS.containsKey("Content-Type"))
+        {
+            this.RESPONSE_HEADERS.add("Content-Type", contentType);
         }
         
         // send headers and write response
