@@ -22,7 +22,7 @@
   <property name="build"         value="bin"/>
   <property name="documents"     value="doc"/>
   <property name="deploy"        value="Deploy_${ant.project.name}"/>
-  <property name="exec_jar_name" value="Run_${ant.project.name}.jar"/>
+  <property name="exec_jar_name" value="${ant.project.name}.jar"/>
   
   <!-- Library properties -->
   <property name="library"       value="lib"/>
