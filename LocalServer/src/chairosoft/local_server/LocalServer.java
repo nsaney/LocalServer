@@ -14,21 +14,12 @@ import java.io.InputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import java.net.BindException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
-import java.net.NetworkInterface;
-import java.net.SocketException;
-
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.List;
 
 import java.util.concurrent.Executor;
 
 import com.sun.net.httpserver.HttpContext;
-import com.sun.net.httpserver.HttpExchange;
-import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
 
 public class LocalServer
@@ -49,7 +40,7 @@ public class LocalServer
         System.out.printf("local address is %s \n", LocalServer.getLocalAddress().getHostAddress());
         System.out.printf("server port is %s \n", server.getPort());
         
-        server.setDefaultRequestHandler(new LocalHttpRequestHandlerAdapter()
+        server.createDefaultContext(new LocalHttpRequestHandlerAdapter()
         {
             @Override public void handleGet(LocalHttpExchange x) throws IOException
             {
@@ -156,9 +147,10 @@ public class LocalServer
      * Convenience method for copying from an InputStream to an OutputStream.
      * This method will attempt to copy until the read method on 
      * the InputStream returns -1.
-     * @param in         the input stream to read from 
-     * @param out        the output stream to write to
-     * @param bufferSize the size of the buffer to use while copying
+     * @param  in          the input stream to read from 
+     * @param  out         the output stream to write to
+     * @param  bufferSize  the size of the buffer to use while copying
+     * @throws IOException in case an error occurs while reading or writing data
      */
     public static void copyIO(InputStream in, OutputStream out, int bufferSize) 
         throws IOException
@@ -263,8 +255,9 @@ public class LocalServer
     public void removeContext(HttpContext context) { this.server.removeContext(context); }
     public void removeContext(String path) { this.server.removeContext(path); }
     
-    public void start()
+    public void createDefaultContext(LocalHttpRequestHandler _defaultRequestHandler)
     {
+        this.setDefaultRequestHandler(_defaultRequestHandler);
         this.createContext("/", (LocalHttpExchange x) ->
         {
             if (this.defaultRequestHandler == null)
@@ -286,7 +279,12 @@ public class LocalServer
                 default: this.defaultRequestHandler.handleOtherRequest(x); break;
             }
         });
-        
+    }
+    public void removeDefaultContext() { this.removeContext("/"); }
+    
+    public void createFaviconContext(String _faviconMimeType, byte[] _faviconBytes)
+    {
+        this.setFavicon(_faviconMimeType, _faviconBytes);
         this.createContext("/favicon.ico", (LocalHttpExchange x) ->
         {
             if (this.faviconBytes == null)
@@ -297,9 +295,11 @@ public class LocalServer
             
             x.sendByteArrayResponse(200, this.faviconMimeType, this.faviconBytes);
         });
-        
-        this.server.start();
     }
+    public void removeFaviconContext() { this.removeContext("/favicon.ico"); }
+    
+    
+    public void start() { this.server.start(); }
     public void stop(int delay) { this.server.stop(delay); }
     
     public Executor getExecutor() { return this.server.getExecutor(); }
