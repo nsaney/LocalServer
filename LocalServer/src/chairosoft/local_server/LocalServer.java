@@ -131,7 +131,7 @@ public class LocalServer
      */
     public static byte[] getByteArrayFromInputStream(InputStream in, int bufferSize)
     {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream() { @Override public byte[] toByteArray() { return this.buf; } };
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
         try 
         {
             LocalServer.copyIO(in, baos, bufferSize);
