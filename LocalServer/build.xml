@@ -82,7 +82,7 @@
     >
       <link 
         offline="true" 
-        href="http://download.oracle.com/javase/7/docs/api/" 
+        href="http://download.oracle.com/javase/8/docs/api/" 
         packagelistLoc="./_package-lists/_java/"
       />
     </javadoc>
