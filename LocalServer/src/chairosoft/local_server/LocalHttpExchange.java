@@ -13,8 +13,15 @@ import java.io.Closeable;
 import java.io.InputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 
 import java.net.URI;
+import java.net.URLDecoder;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
@@ -77,6 +84,44 @@ public class LocalHttpExchange implements Closeable
         sb.append(CRLF);
         sb.append(this.REQUEST_BODY);
         return sb.toString();
+    }
+    
+    /**
+     * Get a map of the query parameters in this exchange's request.
+     * 
+     * @param  encoding  the name of a supported character encoding
+     * @return a map of the query parameter keys and value lists for
+     *         this exchange's request, in the encoding given
+     * @throws UnsupportedEncodingException If character encoding needs to be 
+     *         consulted, but named character encoding is not supported
+     * @see    URLDecoder#decode(String, String)
+     */
+    public Map<String, List<String>> getParameterMap(String encoding) throws UnsupportedEncodingException
+    {
+        Map<String, List<String>> result = new HashMap<>();
+        
+        String rawQuery = this.REQUEST_URI.getRawQuery();
+        if (rawQuery != null)
+        {
+            String[] rawKeyValuePairs = rawQuery.split("&");
+            for (String rawKVPair : rawKeyValuePairs)
+            {
+                String[] rawKVPairSplit = rawKVPair.split("=", 2);
+                String rawKey = rawKVPairSplit[0];
+                String rawValue = rawKVPairSplit.length > 1 ? rawKVPairSplit[1] : null;
+                String key = URLDecoder.decode(rawKey, encoding);
+                String value = URLDecoder.decode(rawValue, encoding);
+                List<String> valueList = result.get(key);
+                if (valueList == null) 
+                {
+                    valueList = new ArrayList<String>();
+                    result.put(key, valueList);
+                }
+                valueList.add(value);
+            }
+        }
+        
+        return result;
     }
     
     public String getResponseHeaderString()
