@@ -1,6 +1,5 @@
 LocalServer/bin
 LocalServer/Deploy_*
-LocalServer/pages_root
 
 # Windows image file caches
 Thumbs.db
