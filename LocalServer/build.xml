@@ -20,8 +20,7 @@
   <property name="version"       value="1.8"/>
   <property name="source"        value="src"/>
   <property name="build"         value="bin"/>
-  <property name="pages_root"    value="pages_root"/>
-  <property name="documents"     value="${pages_root}/doc"/>
+  <property name="documents"     value="doc"/>
   <property name="deploy"        value="Deploy_${ant.project.name}"/>
   <property name="exec_jar_name" value="${ant.project.name}.jar"/>
   
