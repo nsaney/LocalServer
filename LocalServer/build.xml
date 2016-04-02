@@ -85,6 +85,11 @@
         href="http://download.oracle.com/javase/8/docs/api/" 
         packagelistLoc="./_package-lists/_java/"
       />
+      <link 
+        offline="true" 
+        href="https://docs.oracle.com/javase/8/docs/jre/api/net/httpserver/spec/" 
+        packagelistLoc="./_package-lists/_com_sun_net_httpserver/"
+      />
     </javadoc>
     
   </target>
