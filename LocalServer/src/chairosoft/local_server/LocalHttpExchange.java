@@ -32,7 +32,7 @@ public class LocalHttpExchange implements Closeable
     // Instance Fields
     //
     
-    protected final HttpExchange exchange;
+    public final HttpExchange exchange;
     public final String REQUEST_METHOD;
     public final URI REQUEST_URI;
     public final String REQUEST_PROTOCOL;
